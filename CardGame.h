@@ -7,7 +7,6 @@
 
                                                                                     Due: Dec 4, 2020
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-
 /*
 Each component of the game is represented by its corresponding class: Card, Deck, DiscardPile, Chain, Table, TradeArea, Coins, Hand, Players.
 

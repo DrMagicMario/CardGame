@@ -16,6 +16,29 @@
 3. You can add others constructor and destructor to a class if needed.
 */
 
+/*
+Card class and its derived classes (4 marks) Create the bean card and its derived classes: Card is the base class and will be abstract
+    - Blue, Chili, Stink, Green, soy, black, Red and garden are derived classes (from Card) and will have to be concrete classes.
+            A bean card can be printed to console with its first character of its name. Card class will have the following pure virtual functions:
+    - virtual int getCardsPerCoin(int coins) will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins.
+    - virtual string getName() returns the full name of the card (e.g., Blue).
+    - virtual void print(ostream& out) inserts the first character for the card into the output stream supplied as argument. If the first character is the same for two cards, use uppercase for the first one and lowercase for the second one (For example B for Blue and b for Black).
+    - and a global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
+*/
+
+
+/*
+Chain class (2 marks): The template Chain will have to be instantiated in the program by the concrete derived card classes, e.g., Chain<Red>. 
+    Note that in this example Chain will hold the Red cards by pointer in a std::vector<Red*>. 
+    So, you will need an abstract chain interface (Chain_Base) to be able to reference chains of any type from the Player class.
+    Chain will have the following functions:
+        - Chain(istream&, const CardFactory*) is a constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
+        - Chain<T>& operator+=(Card*) adds a card to the Chain. If the run-time type does not match the template type of the chain and exception of type IllegalType needs to be raised.
+        - int sell() counts the number cards in the current chain and returns the number coins according to the function Card::getCardsPerCoin.
+        - and the insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
+            Red RRRR
+*/
+
 /* 
 Deck class (2 marks): Deck is simple derived class from std::vector. Deck will have the following functions:
     - Deck(istream&, const CardFactory*) is a constructor which accepts an istream and reconstructs the deck from file.
@@ -23,9 +46,6 @@ Deck class (2 marks): Deck is simple derived class from std::vector. Deck will h
     - and the insertion operator (friend) to insert all the cards in the deck to an std::ostream. 
 */
 
-class Deck : public std::vector {
-
-};
 
 /* 
 DiscardPile class (2 marks): The DiscardPile class holds cards in a std::vector and is similar to Deck. DiscardPile will have the following functions:

@@ -23,6 +23,10 @@ Deck class (2 marks): Deck is simple derived class from std::vector. Deck will h
     - and the insertion operator (friend) to insert all the cards in the deck to an std::ostream. 
 */
 
+class Deck : public std::vector {
+
+};
+
 /* 
 DiscardPile class (2 marks): The DiscardPile class holds cards in a std::vector and is similar to Deck. DiscardPile will have the following functions:
     - DiscardPile(istream&, const CardFactory*) is a constructor which accepts an istream and reconstructs the DiscardPile from file.

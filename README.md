@@ -13,6 +13,7 @@ Each player is dealt a hand of five cards to start and the remaining cards form 
 Cards in the hand are kept hidden. Cards in trading areas and chains are visible to all players. The discard pile is face up, but only the top card is visible.
 
 The game proceeds with the players taking turns. During their turn, each player does the following:
+    
     1. If the other player has left cards in the trade area from the previous turn (in Step 5), the player may add these cards to his/her chains or discard them.
 
     2. The player then plays the topmost card from his/her hand. The card must be added to a chain with the same beans. If the player has currently no such chain on the table, an old chain on the table will have to be tied and sold, and a new chain must be started. If the chain has not reached a sufficient length, a player may receive 0 coins.

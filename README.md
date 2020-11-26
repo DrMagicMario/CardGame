@@ -1,5 +1,5 @@
 # CardGame
- CSI 2372 Final Project - Fall 2020
+CSI 2372 Final Project - Fall 2020
 
 Card Game:
 In this project, you are asked to program a card game in C++ language. The game is played with a deck of cards with comical illustrations of eight different types of beans (some more scarce than others), which two players place cards in chains, trade the cards and sell the chains in order to raise money.

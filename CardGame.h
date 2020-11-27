@@ -7,6 +7,11 @@
 
                                                                                     Due: Dec 4, 2020
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
 /*
 Each component of the game is represented by its corresponding class: Card, Deck, DiscardPile, Chain, Table, TradeArea, Coins, Hand, Players.
 

@@ -7,7 +7,7 @@
 
                                                                                     Due: Dec 4, 2020
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-
+#include "CardGame.h"
 
 // C++ program Implementation
 /* 
@@ -16,17 +16,114 @@
 3. You can add others constructor and destructor to a class if needed.
 */
 
+int main(){
+    return 0;
+}
+
 /*
-Card class and its derived classes (4 marks) Create the bean card and its derived classes: Card is the base class and will be abstract
-    - Blue, Chili, Stink, Green, soy, black, Red and garden are derived classes (from Card) and will have to be concrete classes.
-            A bean card can be printed to console with its first character of its name. Card class will have the following pure virtual functions:
+Card class and its derived classes (4 marks) Create the bean card and its derived classes: 
+Card is the base class and will be abstract. Card class will have the following pure virtual functions:
     - virtual int getCardsPerCoin(int coins) will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins.
     - virtual string getName() returns the full name of the card (e.g., Blue).
     - virtual void print(ostream& out) inserts the first character for the card into the output stream supplied as argument. If the first character is the same for two cards, use uppercase for the first one and lowercase for the second one (For example B for Blue and b for Black).
-    - and a global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
+    - A global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
 */
 
+class Card{
+    protected:
+    string name;
+    public:
+    Card(string name);
+    ~Card();
+    virtual int getCardsPerCoin(int coins); // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins.
+    virtual string getName(); // returns the full name of the card (e.g., Blue).
+    virtual void print(ostream &out); // inserts the first character for the card into the output stream supplied as argument.
+    // and a global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
+};
 
+/*Blue, Chili, Stink, Green, soy, black, Red and garden are derived classes (from Card) and will have to be concrete classes.*/
+/*A bean card can be printed to console with its first character of its name.*/
+/*Total in deck Blue=20, Chili=18, Stink=16, Green=14, soy=12, black=10, Red=8 and garden=6*/
+
+class Blue : public Card{
+    // Card Value per coin [coin,card]: [1,4], [2,6], [3,8], [4,10]
+    public:
+    Blue();
+    ~Blue();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
+
+class Chili : public Card{
+    // Card Value per coin[coin,card]: [1,3], [2,6], [3,8], [4,9]
+    public:
+    Chili();
+    ~Chili();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
+
+class Stink : public Card{
+    // Card Value per coin[coin,card]: [1,3], [2,5], [3,7], [4,8]
+    public:
+    Stink();
+    ~Stink();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
+
+class Green : public Card{
+    // Card Value per coin[coin,card]: [1,3], [2,5], [3,6], [4,7]
+    public:
+    Green();
+    ~Green();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
+
+class soy : public Card{
+    // Card Value per coin [coin,card]: [1,2], [2,4], [3,6], [4,7]
+    public:
+    soy();
+    ~soy();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
+
+class black : public Card{
+    // Card Value per coin [coin,card]: [1,2], [2,4], [3,5], [4,6]
+    public:
+    black();
+    ~black();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
+
+class Red : public Card{
+    // Card Value per coin [coin,card]: [1,2], [2,3], [3,4], [4,5]
+    public:
+    Red();
+    ~Red();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
+
+class garden : public Card{
+    // Card Value per coin [coin,card]: [1,-], [2,2], [3,3], [4,-]
+    public:
+    garden();
+    ~garden();
+    int getCardsPerCoin(int coins) override;
+    string getName() override;
+    void print(ostream& out) override;
+};
 /*
 Chain class (2 marks): The template Chain will have to be instantiated in the program by the concrete derived card classes, e.g., Chain<Red>. 
     Note that in this example Chain will hold the Red cards by pointer in a std::vector<Red*>. 

@@ -12,6 +12,17 @@
 #include <vector>
 using namespace std;
 
+class Card;
+class Deck;
+class DiscardPile;
+class Chain;
+class Table;
+class TradeArea;
+class Hand;
+class Player;
+class CardFactory;
+
+
 /*
 Each component of the game is represented by its corresponding class: Card, Deck, DiscardPile, Chain, Table, TradeArea, Coins, Hand, Players.
 

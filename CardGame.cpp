@@ -26,10 +26,10 @@ Card is the base class and will be abstract. Card class will have the following 
 */
 
 class Card{
-    protected:
+    protected: //share with its derived classes, accessible to members and friends of classes derived from this class.
     string name;
     public:
-    Card(string name);
+    Card(string given_name) : name(given_name){} // inline constructor
     //pure virtual functions
     virtual ~Card() = default;
     virtual int getCardsPerCoin(int coins) =0; // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins.
@@ -38,6 +38,7 @@ class Card{
     // and a global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
 };
 
+
 /*Blue, Chili, Stink, Green, soy, black, Red and garden are derived classes (from Card) and will have to be concrete classes.*/
 /*A bean card can be printed to console with its first character of its name.*/
 /*Total in deck Blue=20, Chili=18, Stink=16, Green=14, soy=12, black=10, Red=8 and garden=6*/
@@ -45,8 +46,8 @@ class Card{
 class Blue : public Card{
     // Card Value per coin [coin,card]: [1,4], [2,6], [3,8], [4,10]
     public:
-    Blue();
-    ~Blue();
+    Blue() : Card("Blue") {} // inline constructor
+    ~Blue() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -55,8 +56,8 @@ class Blue : public Card{
 class Chili : public Card{
     // Card Value per coin[coin,card]: [1,3], [2,6], [3,8], [4,9]
     public:
-    Chili();
-    ~Chili();
+    Chili(): Card("Chili") {} // inline constructor
+    ~Chili() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -65,8 +66,8 @@ class Chili : public Card{
 class Stink : public Card{
     // Card Value per coin[coin,card]: [1,3], [2,5], [3,7], [4,8]
     public:
-    Stink();
-    ~Stink();
+    Stink(): Card("Stink") {} // inline constructor
+    ~Stink() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -75,8 +76,8 @@ class Stink : public Card{
 class Green : public Card{
     // Card Value per coin[coin,card]: [1,3], [2,5], [3,6], [4,7]
     public:
-    Green();
-    ~Green();
+    Green(): Card("Green"){} // inline constructor
+    ~Green() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -85,8 +86,8 @@ class Green : public Card{
 class soy : public Card{
     // Card Value per coin [coin,card]: [1,2], [2,4], [3,6], [4,7]
     public:
-    soy();
-    ~soy();
+    soy(): Card("Soy"){} // inline constructor
+    ~soy() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -95,8 +96,8 @@ class soy : public Card{
 class black : public Card{
     // Card Value per coin [coin,card]: [1,2], [2,4], [3,5], [4,6]
     public:
-    black();
-    ~black();
+    black(): Card("Black"){} // inline constructor
+    ~black() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -105,8 +106,8 @@ class black : public Card{
 class Red : public Card{
     // Card Value per coin [coin,card]: [1,2], [2,3], [3,4], [4,5]
     public:
-    Red();
-    ~Red();
+    Red(): Card("Red"){} // inline constructor
+    ~Red() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -115,8 +116,8 @@ class Red : public Card{
 class garden : public Card{
     // Card Value per coin [coin,card]: [1,-], [2,2], [3,3], [4,-]
     public:
-    garden();
-    ~garden();
+    garden(): Card("Garden"){} // inline constructor
+    ~garden() = default;
     int getCardsPerCoin(int coins) override;
     string getName() override;
     void print(ostream& out) override;
@@ -135,7 +136,13 @@ Chain class (2 marks): The template Chain will have to be instantiated in the pr
 */
 
 class Chain {
-
+    private:
+    public:
+    Chain(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
+    Chain& operator+=(Card*); //adds a card to the Chain. If the run-time type does not match the template type of the chain and exception of type IllegalType needs to be raised.
+    int sell(); //counts the number cards in the current chain and returns the number coins according to the function Card::getCardsPerCoin.
+    //insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
+            //Red RRRR
 };
 
 /* 

@@ -4,8 +4,9 @@
 
                                                                                       Authors
                                                                               Ivan Godoy-Smirnov (8135127)
+                                                                              Mustafa Basheer (8792149)
 
-                                                                                    Due: Dec 4, 2020
+                                                                                    Due: Dec 7, 2020
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 #include "CardGame.h"
 
@@ -25,20 +26,21 @@ Card is the base class and will be abstract. Card class will have the following 
     - A global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
 */
 
+//abstract class: class that has pure virtual functions inside it
 class Card{
     protected:
     string name;
     public:
     Card(string name);
-    //pure virtual functions
+    //pure virtual functions: has no implementation in the parent class, so need to be implemented (override) in children classes
     virtual ~Card() = default;
-    virtual int getCardsPerCoin(int coins) =0; // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins.
-    virtual string getName() =0; // returns the full name of the card (e.g., Blue).
-    virtual void print(ostream &out) =0; // inserts the first character for the card into the output stream supplied as argument.
+    virtual int getCardsPerCoin(int coins) =0; // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins. -pure virtual function
+    virtual string getName() =0; // returns the full name of the card (e.g., Blue). -pure virtual function
+    virtual void print(ostream &out) =0; // inserts the first character for the card into the output stream supplied as argument. -pure virtual function
     // and a global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
 };
 
-/*Blue, Chili, Stink, Green, soy, black, Red and garden are derived classes (from Card) and will have to be concrete classes.*/
+/*Blue, Chili, Stink, Green, soy, black, Red and garden are derived classes (from Card) and will have to be concrete classes (when we override all oure virtual functions in derived classes, we call the derived class a concrete class).*/
 /*A bean card can be printed to console with its first character of its name.*/
 /*Total in deck Blue=20, Chili=18, Stink=16, Green=14, soy=12, black=10, Red=8 and garden=6*/
 
@@ -47,8 +49,34 @@ class Blue : public Card{
     public:
     Blue();
     ~Blue();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 1 || coins > 4) {
+                throw coins;
+            }
+            else if (coins == 1) {
+                return 4;
+            }
+            else if (coins == 2) {
+                return 6;
+            }
+            else if (coins == 3) {
+                return 8;
+            }
+            else if (coins == 3) {
+                return 10;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than one or greater than 4!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "Blue";
+        return name;
+    };
     void print(ostream& out) override;
 };
 
@@ -57,8 +85,34 @@ class Chili : public Card{
     public:
     Chili();
     ~Chili();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 1 || coins > 4) {
+                throw coins;
+            }
+            else if (coins == 1) {
+                return 3;
+            }
+            else if (coins == 2) {
+                return 6;
+            }
+            else if (coins == 3) {
+                return 8;
+            }
+            else if (coins == 3) {
+                return 9;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than one or greater than 4!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "Chili";
+        return name;
+    };
     void print(ostream& out) override;
 };
 
@@ -67,8 +121,34 @@ class Stink : public Card{
     public:
     Stink();
     ~Stink();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 1 || coins > 4) {
+                throw coins;
+            }
+            else if (coins == 1) {
+                return 3;
+            }
+            else if (coins == 2) {
+                return 5;
+            }
+            else if (coins == 3) {
+                return 7;
+            }
+            else if (coins == 3) {
+                return 8;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than one or greater than 4!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "Stink";
+        return name;
+    };
     void print(ostream& out) override;
 };
 
@@ -77,8 +157,34 @@ class Green : public Card{
     public:
     Green();
     ~Green();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 1 || coins > 4) {
+                throw coins;
+            }
+            else if (coins == 1) {
+                return 3;
+            }
+            else if (coins == 2) {
+                return 5;
+            }
+            else if (coins == 3) {
+                return 6;
+            }
+            else if (coins == 3) {
+                return 7;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than one or greater than 4!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "Green";
+        return name;
+    };
     void print(ostream& out) override;
 };
 
@@ -87,8 +193,34 @@ class soy : public Card{
     public:
     soy();
     ~soy();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 1 || coins > 4) {
+                throw coins;
+            }
+            else if (coins == 1) {
+                return 2;
+            }
+            else if (coins == 2) {
+                return 4;
+            }
+            else if (coins == 3) {
+                return 6;
+            }
+            else if (coins == 3) {
+                return 7;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than one or greater than 4!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "soy";
+        return name;
+    };
     void print(ostream& out) override;
 };
 
@@ -97,8 +229,34 @@ class black : public Card{
     public:
     black();
     ~black();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 1 || coins > 4) {
+                throw coins;
+            }
+            else if (coins == 1) {
+                return 2;
+            }
+            else if (coins == 2) {
+                return 4;
+            }
+            else if (coins == 3) {
+                return 5;
+            }
+            else if (coins == 3) {
+                return 6;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than one or greater than 4!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "black";
+        return name;
+    };
     void print(ostream& out) override;
 };
 
@@ -107,8 +265,34 @@ class Red : public Card{
     public:
     Red();
     ~Red();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 1 || coins > 4) {
+                throw coins;
+            }
+            else if (coins == 1) {
+                return 2;
+            }
+            else if (coins == 2) {
+                return 3;
+            }
+            else if (coins == 3) {
+                return 4;
+            }
+            else if (coins == 3) {
+                return 5;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than one or greater than 4!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "Red";
+        return name;
+    };
     void print(ostream& out) override;
 };
 
@@ -117,8 +301,28 @@ class garden : public Card{
     public:
     garden();
     ~garden();
-    int getCardsPerCoin(int coins) override;
-    string getName() override;
+    int getCardsPerCoin(int coins) override {
+        //numbers are from the table in the project document
+        try {
+            if (coins < 2 || coins > 3) {
+                throw coins;
+            }
+            else if (coins == 2) {
+                return 2;
+            }
+            else if (coins == 3) {
+                return 3;
+            }
+        }
+        catch (int ex) {
+            cout << "Exception: coins cannot be less than 2 or greater than 3!";
+        }
+        return 0;
+    };
+    string getName() override {
+        name = "garden";
+        return name;
+    };
     void print(ostream& out) override;
 };
 

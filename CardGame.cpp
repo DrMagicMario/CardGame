@@ -32,10 +32,10 @@ class Card{
     Card(string given_name) : name(given_name){} // inline constructor
     //pure virtual functions
     virtual ~Card() = default;
-    virtual int getCardsPerCoin(int coins) =0; // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins.
-    virtual string getName() =0; // returns the full name of the card (e.g., Blue).
-    virtual void print(ostream &out) =0; // inserts the first character for the card into the output stream supplied as argument.
-    // and a global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
+    virtual int getCardsPerCoin(int coins) = 0; // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins.
+    virtual string getName() = 0; // returns the full name of the card (e.g., Blue).
+    virtual void print(ostream &out) = 0; // inserts the first character for the card into the output stream supplied as argument.
+    ostream &print(ostream &os, const Card &item); // and a global stream insertion operator for printing any objects of such a class which implements the “Virtual Friend Function Idiom” with the class hierarchy.
 };
 
 
@@ -141,7 +141,7 @@ class Chain {
     Chain(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
     Chain& operator+=(Card*); //adds a card to the Chain. If the run-time type does not match the template type of the chain and exception of type IllegalType needs to be raised.
     int sell(); //counts the number cards in the current chain and returns the number coins according to the function Card::getCardsPerCoin.
-    //insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
+    ostream &print(ostream &os, const Chain &item);//insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
             //Red RRRR
 };
 
@@ -155,7 +155,7 @@ class Deck: public vector<Card>{
     public:
     Deck(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the deck from file.
     Card* draw(); //returns and removes the top card from the deck.
-    //the insertion operator (friend) to insert all the cards in the deck to an std::ostream.
+    ostream &print(ostream &os, const Deck &item);//the insertion operator (friend) to insert all the cards in the deck to an std::ostream.
 };
 
 /* 
@@ -175,7 +175,7 @@ class DiscardPile: public vector<Card>{
     Card* pickUp(); //returns and removes the top card from the discard pile.
     Card* top(); //returns but does not remove the top card from the discard pile.
     void print(std::ostream&); //insert all the cards in the DiscardPile to an std::ostream
-    //the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream.
+    ostream &print(ostream &os, const DiscardPile &item);//the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream.
 };
 
 /* 
@@ -196,7 +196,7 @@ class TradeArea{
     TradeArea& operator+=(Card*); //adds the card to the trade area but it does not check if it is legal to place the card.
     bool legal(Card*); //returns true if the card can be legally added to the TradeArea, i.e., a card of the same bean is already in the TradeArea.
     Card* trade(string); //removes a card of the corresponding bean name from the trade area.
-    //insertion operator (friend) to insert all the cards of the trade area to an std::ostream. 
+    ostream &print(ostream &os, const TradeArea &item);//insertion operator (friend) to insert all the cards of the trade area to an std::ostream. 
 };
 
 /* 
@@ -217,7 +217,7 @@ class Hand{
     Card* play(); //returns and removes the top card from the player's hand.
     Card* top(); //returns but does not remove the top card from the player's hand.
     Card* operator[](int); //returns and removes the Card at a given index.
-    //the insertion operator (friend) to print Hand on an std::ostream. The hand should print all the cards in order. 
+    ostream &print(ostream &os, const Hand &item);//the insertion operator (friend) to print Hand on an std::ostream. The hand should print all the cards in order. 
 };
 
 /* 
@@ -252,7 +252,7 @@ class Player {
     Chain& operator[](int i); //returns the chain at position i.
     void buyThirdChain(); //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
     void printHand(std::ostream&, bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
-    //the insertion operator (friend) to print a Player to an std::ostream. The player's name, the number of coins in the player's possession and each of the chains (2 or 3, some possibly empty) should be printed. 
+    ostream &print(ostream &os, const Player &user);//the insertion operator (friend) to print a Player to an std::ostream. The player's name, the number of coins in the player's possession and each of the chains (2 or 3, some possibly empty) should be printed. 
 };
 
 
@@ -274,7 +274,7 @@ class Table{
     Table(istream&, const CardFactory*); //constructor which accepts an istream and reconstruct the Table from file.
     bool win(std::string&); //returns true when a player has won. The name of the player is returned by reference (in the argument). The winning condition is that all cards from the deck must have been picked up and then the player with the most coins wins.
     void printHand(bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true).
-    //the insertion operator (friend) to print a Table to an std::ostream. The two players, the discard pile, the trading area should be printed. This is the top level print out. Note that a complete output with all cards for the pause functionality is printed with a separate function.
+    ostream &print(ostream &os, const Table &item);//the insertion operator (friend) to print a Table to an std::ostream. The two players, the discard pile, the trading area should be printed. This is the top level print out. Note that a complete output with all cards for the pause functionality is printed with a separate function.
 };
 
 /*

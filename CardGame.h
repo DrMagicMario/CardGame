@@ -4,9 +4,8 @@
 
                                                                                       Authors
                                                                               Ivan Godoy-Smirnov (8135127)
-                                                                              Mustafa Basheer (8792149)
 
-                                                                                    Due: Dec 7, 2020
+                                                                                    Due: Dec 4, 2020
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 #include <iostream>
 #include <string>
@@ -22,13 +21,6 @@ class TradeArea;
 class Hand;
 class Player;
 class CardFactory;
-
-int main() {
-    Blue blue;
-    Card *blue1 = &blue;
-    blue1->getName();
-    return 0;
-}
 
 
 /*

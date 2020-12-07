@@ -27,7 +27,7 @@ Card is the base class and will be abstract. Card class will have the following 
 */ 
 
 //abstract class: class that has pure virtual functions inside it
-class Card{
+class Card{ // delete the copy constructor and assignment operator in Card.
     protected:
         string name;
     public:
@@ -367,8 +367,9 @@ Chain class (2 marks): The template Chain will have to be instantiated in the pr
             Red RRRR
 */
 
-//container holding cards
-class Chain { //IllegalType if a player attempts to place a card illegally into a chain (a chain that holds different beans).
+// A template class will have to created for Chain being parametric in the type of card.
+// container holding cards --> std::vector is fine
+class Chain { 
     private:
     public:
     Chain(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
@@ -385,14 +386,22 @@ Deck class (2 marks): Deck is simple derived class from std::vector. Deck will h
     - Card* draw() returns and removes the top card from the deck.
     - the insertion operator (friend) to insert all the cards in the deck to an std::ostream. 
 */
-//container holding cards
-class Deck: public vector<Card>{
+//container holding cards --> std::vector is fine
+class Deck{ 
+    private:
+    vector<Card*> myDeck;
     public:
     Deck(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the deck from file.
     ~Deck() = default; //destructor
-    Card* draw(); //returns and removes the top card from the deck.
+    Card* draw(); 
     ostream &print(ostream &os, const Deck &item);//the insertion operator (friend) to insert all the cards in the deck to an std::ostream.
 };
+
+Card* Deck::draw() { //returns and removes the top card from the deck.
+    Card *myPick = myDeck.back();
+    myDeck.pop_back();
+    return myPick;
+}
 
 /* 
 DiscardPile class (2 marks): The DiscardPile class holds cards in a std::vector and is similar to Deck. DiscardPile will have the following functions:
@@ -404,17 +413,35 @@ DiscardPile class (2 marks): The DiscardPile class holds cards in a std::vector 
     - and the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream. 
 */
 
-//container holding cards
-class DiscardPile: public vector<Card>{
+//container holding cards --> std::vector is fine
+class DiscardPile{
+    private: 
+    vector<Card*> myDiscPile; //container
     public:
     DiscardPile(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the DiscardPile from file.
     ~DiscardPile() = default; //destructor
-    DiscardPile& operator+=(Card*); //discards the card to the pile.
-    Card* pickUp(); //returns and removes the top card from the discard pile.
-    Card* top(); //returns but does not remove the top card from the discard pile.
+    DiscardPile& operator+=(Card*);
+    Card* pickUp();
+    Card* top();
     void print(std::ostream&); //insert all the cards in the DiscardPile to an std::ostream
     ostream &print(ostream &os, const DiscardPile &item);//the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream.
 };
+
+DiscardPile& DiscardPile::operator += (Card *discCard) { //discards the card to the pile.
+    myDiscPile.push_back(discCard);
+    return *this;
+}
+
+Card* DiscardPile:: pickUp() { //returns and removes the top card from the discard pile.
+    Card *myPick = myDiscPile.back();
+    myDiscPile.pop_back();
+    return myPick;
+}
+
+Card* DiscardPile:: top() { //returns but does not remove the top card from the discard pile.
+    return myDiscPile.back();
+}
+
 
 /* 
 TradeArea class (3 marks): The TradeArea holds cards in a std::list, and will have the following functions:
@@ -428,15 +455,50 @@ TradeArea class (3 marks): The TradeArea holds cards in a std::list, and will ha
 
 class TradeArea{
     private:
-    //std::list myList; 
+    list<Card*> myList; //holds cards in a std::list
     public:
-    TradeArea(istream&, const CardFactory*); //constructor which accepts an istream and reconstruct the TradeArea from file.
+    TradeArea(istream& file, const CardFactory*); //constructor which accepts an istream and reconstruct the TradeArea from file.
     ~TradeArea() = default; //destructor
-    TradeArea& operator+=(Card*); //adds the card to the trade area but it does not check if it is legal to place the card.
-    bool legal(Card*); //returns true if the card can be legally added to the TradeArea, i.e., a card of the same bean is already in the TradeArea.
-    Card* trade(string); //removes a card of the corresponding bean name from the trade area.
+    TradeArea& operator+=(Card*);  
+    bool legal(Card*); 
+    Card* trade(string); 
+    int numCards(); 
     ostream &print(ostream &os, const TradeArea &item);//insertion operator (friend) to insert all the cards of the trade area to an std::ostream. 
 };
+
+TradeArea& TradeArea::operator += (Card *tradeCard){ //adds the card to the trade area but it does not check if it is legal to place the card.
+    myList.push_back(tradeCard);
+    return *this;
+}
+
+bool TradeArea::legal(Card *tradeCard){ //returns true if the card can be legally added to the TradeArea, i.e., a card of the same bean is already in the TradeArea.
+    bool mybool = false;
+    for (auto i: myList){
+        if (i->getName() == tradeCard->getName()){
+            mybool = true;
+            break;
+        }
+    }
+    return mybool;
+}
+
+Card* TradeArea:: trade(string card) { //removes a card of the corresponding bean name from the trade area.
+    Card *myPick;
+    for (auto i : myList){
+        if (card == i->getName()){
+            myPick = i;
+            myList.remove(i);
+            break;
+        }
+    }
+    return myPick;
+}
+
+int TradeArea::numCards(){ //returns the number of cards currently in the trade area.
+    return myList.size();
+}
+
+
 
 /* 
 Hand class (2 marks): Hand class will have the following functions:
@@ -448,19 +510,39 @@ Hand class (2 marks): Hand class will have the following functions:
     - and the insertion operator (friend) to print Hand on an std::ostream. The hand should print all the cards in order. 
 */
 
-//container holding cards
-class Hand{ // we can use a std::list to remove at an arbitrary location efficiently with a std::queue adapter
+//container holding cards --> we can use a std::list to remove at an arbitrary location
+class Hand{
     private:
+    list<Card*> myHand;
     public:
     Hand(istream&, const CardFactory*); //constructor which accepts an istream and reconstruct the Hand from file.
     ~Hand() = default; //destructor
-    Hand& operator+=(Card*); //adds the card to the rear of the hand.
-    Card* play(); //returns and removes the top card from the player's hand.
-    Card* top(); //returns but does not remove the top card from the player's hand.
-    Card* operator[](int); //returns and removes the Card at a given index.
+    Hand& operator+=(Card*); 
+    Card* play(); 
+    Card* top(); 
+    Card* operator[](int);
     ostream &print(ostream &os, const Hand &item);//the insertion operator (friend) to print Hand on an std::ostream. The hand should print all the cards in order. 
 };
 
+Hand& Hand:: operator+=(Card *handCard){ //adds the card to the rear of the hand.
+    myHand.push_back(handCard);
+    return *this;
+}
+
+Card* Hand::play(){ //returns and removes the top card from the player's hand.
+    Card *myPick = myHand.front();
+    myHand.pop_front();
+    return myPick;
+}
+
+Card* Hand::top(){ //returns but does not remove the top card from the player's hand.
+    return myHand.front();
+}
+
+Card* Hand::operator[](int){ //returns and removes the Card at a given index.
+    Card *myPick;
+    return myPick; //need to update this
+}
 /* 
 Player class (3 marks): Player class will have the following functions:
     - Player(std::string&) is a constructor that creates a Player with a given name.
@@ -482,20 +564,49 @@ Player class (3 marks): Player class will have the following functions:
 
 class Player {
     private:
+    string name; // players name
+    int coins; // players number of coins
+    int chains; // only increment when chain has at least 1 Card in it
+    vector<Chain*> myChain; //players chains
     public:
-    Player(std::string&); //constructor that creates a Player with a given name.
+    Player(string&); 
     Player(istream&, const CardFactory*); //constructor which accepts anistream and reconstruct the Player from file.
     ~Player() = default; //destructor
-    std::string getName(); //get the name of the player.
-    int getNumCoins(); //get the number of coins currently held by the player.
-    Player& operator+=(int); //add a number of coins
-    int getMaxNumChains(); //returns either 2 or 3.
-    int getNumChains(); //returns the number of non-zero chains
+    string getName(); 
+    int getNumCoins(); 
+    Player& operator+=(int); 
+    int getMaxNumChains();
+    int getNumChains();
     Chain& operator[](int i); //returns the chain at position i.
     void buyThirdChain(); //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
-    void printHand(std::ostream&, bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
+    void printHand(ostream&, bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
     ostream &print(ostream &os, const Player &user);//the insertion operator (friend) to print a Player to an std::ostream. The player's name, the number of coins in the player's possession and each of the chains (2 or 3, some possibly empty) should be printed. 
 };
+
+Player::Player(string &newName){ //constructor that creates a Player with a given name.
+    name = newName;
+}
+
+string Player::getName(){ //get the name of the player.
+    return name;
+}
+
+int Player::getNumCoins(){ //get the number of coins currently held by the player.
+    return coins;
+}
+
+Player& Player::operator += (int toAdd) { //add a number of coins
+    coins += toAdd;
+    return *this;
+}
+
+int Player::getMaxNumChains() { //returns either 2 or 3.
+    return 2; //incorrect: need to read game rules again
+}
+
+int Player::getNumChains(){ //returns the number of non-zero chains
+    return chains;
+}
 
 
 /* 
@@ -526,7 +637,7 @@ CardFactory class (2 marks): The card factory serves as a factory for all the be
     - static CardFactory* getFactory() returns a pointer to the only instance of CardFactory.
     - Deck getDeck() returns a deck with all 104 bean cards. Note that the 104 bean cards are always the same but their order in the deck needs to be different every time. Use std::shuffle to achieve this.
 */
-class CardFactory{
+class CardFactory{ // Other parts of the program will only use pointers to access the cards. Note that means, we will delete the copy constructor and assignment operator in Card.
     public:
     CardFactory();
     ~CardFactory() = default;

@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <list>
+#include <queue>
 using namespace std;
 
 class Card;
@@ -48,7 +50,7 @@ The classes Deck, DiscardPile, Hand and Chain are all containers holding cards:
 
 - TradeArea class will have to hold cards openly and support random access insertion and removal.
 
-- CardFactory will generate all cards, and so, we will explore the factory pattern. A factory ensures that there is only a single unit in the program that is responsible to create and delete cards. 
+- CardFactory will generate all cards. A factory ensures that there is only a single unit in the program that is responsible to create and delete cards. 
         Other parts of the program will only use pointers to access the cards. Note that means, we will delete the copy constructor and assignment operator in Card.
 
 

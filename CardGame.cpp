@@ -35,6 +35,9 @@ class Card{ // delete the copy constructor and assignment operator in Card.
             name = "";
         };
         void setName(string str) { name = str; };
+        //deleted copy constructor and assignment operator
+        Card(const Card&) = delete;
+        Card &operator=(const Card&) = delete;
         //pure virtual functions: has no implementation in the parent class, so need to be implemented (override) in children classes
         virtual ~Card() = default;
         virtual int getCardsPerCoin(int coins) = 0; // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins. -pure virtual function
@@ -369,16 +372,20 @@ Chain class (2 marks): The template Chain will have to be instantiated in the pr
 
 // A template class will have to created for Chain being parametric in the type of card.
 // container holding cards --> std::vector is fine
+
 class Chain { 
     private:
+    vector<Card*> myChain;
     public:
+    Chain(); //constructor
     Chain(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
     ~Chain() = default; //destructor
-    Chain& operator+=(Card*); //adds a card to the Chain. If the run-time type does not match the template type of the chain and exception of type IllegalType needs to be raised.
+    Chain& operator+=(Card*);
     int sell(); //counts the number cards in the current chain and returns the number coins according to the function Card::getCardsPerCoin.
     ostream &print(ostream &os, const Chain &item);//insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
             //Red RRRR
 };
+
 
 /* 
 Deck class (2 marks): Deck is simple derived class from std::vector. Deck will have the following functions:
@@ -567,7 +574,7 @@ class Player {
     string name; // players name
     int coins; // players number of coins
     int chains; // only increment when chain has at least 1 Card in it
-    vector<Chain*> myChain; //players chains
+    vector<Chain*> myChains; //players chains
     public:
     Player(string&); 
     Player(istream&, const CardFactory*); //constructor which accepts anistream and reconstruct the Player from file.
@@ -577,7 +584,7 @@ class Player {
     Player& operator+=(int); 
     int getMaxNumChains();
     int getNumChains();
-    Chain& operator[](int i); //returns the chain at position i.
+    Chain& operator[](int i); 
     void buyThirdChain(); //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
     void printHand(ostream&, bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
     ostream &print(ostream &os, const Player &user);//the insertion operator (friend) to print a Player to an std::ostream. The player's name, the number of coins in the player's possession and each of the chains (2 or 3, some possibly empty) should be printed. 
@@ -608,6 +615,12 @@ int Player::getNumChains(){ //returns the number of non-zero chains
     return chains;
 }
 
+Chain& Player::operator[](int i){ //returns the chain at position i.
+    return *myChains[i];
+}
+
+void Player::buyThirdChain(){ //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
+} 
 
 /* 
 Table class (2 marks): Table will manage all the game components. It will hold two objects of type Player, the Deck and the DiscardPile, as well as the TradeArea. Table class will have the following functions:

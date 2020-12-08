@@ -430,7 +430,7 @@ class DiscardPile{
     DiscardPile& operator+=(Card*);
     Card* pickUp();
     Card* top();
-    void print(std::ostream&); //insert all the cards in the DiscardPile to an std::ostream
+    void print(std::ostream&); 
     ostream &print(ostream &os, const DiscardPile &item);//the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream.
 };
 
@@ -447,6 +447,12 @@ Card* DiscardPile:: pickUp() { //returns and removes the top card from the disca
 
 Card* DiscardPile:: top() { //returns but does not remove the top card from the discard pile.
     return myDiscPile.back();
+}
+
+void DiscardPile::print(std::ostream &os) { //insert all the cards in the DiscardPile to an std::ostream
+    for (int i = 0; i < myDiscPile.size(); i++){
+        os << myDiscPile[i];
+    }
 }
 
 
@@ -728,7 +734,7 @@ ostream& operator << (ostream& out, const Card& c)
 
 int main() {
     string selection;
-    CardFactory myFactory = new CardFactory(); 
+    //CardFactory myFactory = new CardFactory(); 
     cout<< "would you like to laod a previous game? [y/n]" << endl;
     cin >> selection;
     if (selection == "y"){

@@ -433,7 +433,7 @@ public:
         
         int num_cards = static_cast<int>(type_card.size());
       
-        return type_card.at(0)->getCoinsPerCard(num_cards);
+        return type_card.at(0)->getCardsPerCoin(num_cards);
     }
     
     //prints the name of the chain and the nuber of cards the chain contains in the format "Ruby  R R R"

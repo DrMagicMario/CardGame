@@ -394,7 +394,7 @@ Deck class (2 marks): Deck is simple derived class from std::vector. Deck will h
     - the insertion operator (friend) to insert all the cards in the deck to an std::ostream. 
 */
 //container holding cards --> std::vector is fine
-class Deck{ 
+class Deck: public vector<Card*>{ 
     private:
     vector<Card*> myDeck;
     public:
@@ -622,6 +622,11 @@ Chain& Player::operator[](int i){ //returns the chain at position i.
 void Player::buyThirdChain(){ //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
 } 
 
+void Player::printHand(ostream &os, bool select) { //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
+    if (select) {
+
+    }
+}
 /* 
 Table class (2 marks): Table will manage all the game components. It will hold two objects of type Player, the Deck and the DiscardPile, as well as the TradeArea. Table class will have the following functions:
     - Table(istream&, const CardFactory*) is a constructor which accepts an istream and reconstruct the Table from file.
@@ -639,10 +644,28 @@ class Table{
     public:
     Table(istream&, const CardFactory*); //constructor which accepts an istream and reconstruct the Table from file.
     ~Table() = default; //destructor
-    bool win(std::string&); //returns true when a player has won. The name of the player is returned by reference (in the argument). The winning condition is that all cards from the deck must have been picked up and then the player with the most coins wins.
-    void printHand(bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true).
+    bool win(std::string&); 
+    void printHand(bool); 
     ostream &print(ostream &os, const Table &item);//the insertion operator (friend) to print a Table to an std::ostream. The two players, the discard pile, the trading area should be printed. This is the top level print out. Note that a complete output with all cards for the pause functionality is printed with a separate function.
 };
+
+bool Table::win(string& winner){ //returns true when a player has won. The name of the player is returned by reference (in the argument). The winning condition is that all cards from the deck must have been picked up and then the player with the most coins wins.
+    bool val = false;
+
+    if (myDeck.size() != 0) {
+        return val;
+    } else if ((user1.getName()==winner) && (user1.getNumCoins() > user2.getNumCoins())){
+        val = true;
+    } else if ((user2.getName()==winner) && (user2.getNumCoins() > user1.getNumCoins())) {
+        val = true;
+    }
+
+    return val;
+}
+
+void Table::printHand(bool select){ //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true).
+    return;
+}
 
 /*
 CardFactory class (2 marks): The card factory serves as a factory for all the bean cards. CardFactory class will have the following functions:

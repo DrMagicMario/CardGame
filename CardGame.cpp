@@ -35,6 +35,9 @@ class Card{ // delete the copy constructor and assignment operator in Card.
             name = "";
         };
         void setName(string str) { name = str; };
+        //deleted copy constructor and assignment operator
+        Card(const Card&) = delete;
+        Card &operator=(const Card&) = delete;
         //pure virtual functions: has no implementation in the parent class, so need to be implemented (override) in children classes
         virtual ~Card() = default;
         virtual int getCardsPerCoin(int coins) = 0; // will implement in the derived classes the above table for how many cards are necessary to receive the corresponding number of coins. -pure virtual function
@@ -369,16 +372,26 @@ Chain class (2 marks): The template Chain will have to be instantiated in the pr
 
 // A template class will have to created for Chain being parametric in the type of card.
 // container holding cards --> std::vector is fine
+
 class Chain { 
     private:
+    vector<Card*> myChain;
     public:
+    Chain(); //constructor
     Chain(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
     ~Chain() = default; //destructor
-    Chain& operator+=(Card*); //adds a card to the Chain. If the run-time type does not match the template type of the chain and exception of type IllegalType needs to be raised.
+    Chain& operator+=(Card*);
     int sell(); //counts the number cards in the current chain and returns the number coins according to the function Card::getCardsPerCoin.
+    bool chainEnded(){
+        if (myChain.empty()) {
+            return true;
+        };
+        return false;
+    }
     ostream &print(ostream &os, const Chain &item);//insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
             //Red RRRR
 };
+
 
 /* 
 Deck class (2 marks): Deck is simple derived class from std::vector. Deck will have the following functions:
@@ -387,7 +400,7 @@ Deck class (2 marks): Deck is simple derived class from std::vector. Deck will h
     - the insertion operator (friend) to insert all the cards in the deck to an std::ostream. 
 */
 //container holding cards --> std::vector is fine
-class Deck{ 
+class Deck: public vector<Card*>{ 
     private:
     vector<Card*> myDeck;
     public:
@@ -462,6 +475,9 @@ class TradeArea{
     TradeArea(istream& file, const CardFactory*); //constructor which accepts an istream and reconstruct the TradeArea from file.
     ~TradeArea() = default; //destructor
     TradeArea& operator+=(Card*);  
+    list<Card*> getTradeArea() {
+        return myList;
+    };
     bool legal(Card*); 
     Card* trade(string); 
     int numCards(); 
@@ -499,8 +515,6 @@ Card* TradeArea:: trade(string card) { //removes a card of the corresponding bea
 int TradeArea::numCards(){ //returns the number of cards currently in the trade area.
     return myList.size();
 }
-
-
 
 /* 
 Hand class (2 marks): Hand class will have the following functions:
@@ -569,9 +583,11 @@ class Player {
     string name; // players name
     int coins; // players number of coins
     int chains; // only increment when chain has at least 1 Card in it
-    vector<Chain*> myChain; //players chains
+    vector<Chain*> myChains; //players chains
     public:
-    Player(string&); 
+        Player(string& newName) {
+            name = newName;
+        };
     Player(istream&, const CardFactory*); //constructor which accepts anistream and reconstruct the Player from file.
     ~Player() = default; //destructor
     string getName(); 
@@ -579,7 +595,7 @@ class Player {
     Player& operator+=(int); 
     int getMaxNumChains();
     int getNumChains();
-    Chain& operator[](int i); //returns the chain at position i.
+    Chain& operator[](int i); 
     void buyThirdChain(); //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
     void printHand(ostream&, bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
     ostream &print(ostream &os, const Player &user);//the insertion operator (friend) to print a Player to an std::ostream. The player's name, the number of coins in the player's possession and each of the chains (2 or 3, some possibly empty) should be printed. 
@@ -603,14 +619,25 @@ Player& Player::operator += (int toAdd) { //add a number of coins
 }
 
 int Player::getMaxNumChains() { //returns either 2 or 3.
-    return 2; //incorrect: need to read game rules again
+    return 2; //for the purpose of this project
 }
 
 int Player::getNumChains(){ //returns the number of non-zero chains
     return chains;
 }
 
+Chain& Player::operator[](int i){ //returns the chain at position i.
+    return *myChains[i];
+}
 
+void Player::buyThirdChain(){ //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
+} 
+
+void Player::printHand(ostream &os, bool select) { //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
+    if (select) {
+
+    }
+}
 /* 
 Table class (2 marks): Table will manage all the game components. It will hold two objects of type Player, the Deck and the DiscardPile, as well as the TradeArea. Table class will have the following functions:
     - Table(istream&, const CardFactory*) is a constructor which accepts an istream and reconstruct the Table from file.
@@ -628,10 +655,28 @@ class Table{
     public:
     Table(istream&, const CardFactory*); //constructor which accepts an istream and reconstruct the Table from file.
     ~Table() = default; //destructor
-    bool win(std::string&); //returns true when a player has won. The name of the player is returned by reference (in the argument). The winning condition is that all cards from the deck must have been picked up and then the player with the most coins wins.
-    void printHand(bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true).
+    bool win(std::string&); 
+    void printHand(bool); 
     ostream &print(ostream &os, const Table &item);//the insertion operator (friend) to print a Table to an std::ostream. The two players, the discard pile, the trading area should be printed. This is the top level print out. Note that a complete output with all cards for the pause functionality is printed with a separate function.
 };
+
+bool Table::win(string& winner){ //returns true when a player has won. The name of the player is returned by reference (in the argument). The winning condition is that all cards from the deck must have been picked up and then the player with the most coins wins.
+    bool val = false;
+
+    if (myDeck.size() != 0) {
+        return val;
+    } else if ((user1.getName()==winner) && (user1.getNumCoins() > user2.getNumCoins())){
+        val = true;
+    } else if ((user2.getName()==winner) && (user2.getNumCoins() > user1.getNumCoins())) {
+        val = true;
+    }
+
+    return val;
+}
+
+void Table::printHand(bool select){ //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true).
+    return;
+}
 
 /*
 CardFactory class (2 marks): The card factory serves as a factory for all the bean cards. CardFactory class will have the following functions:
@@ -748,5 +793,103 @@ istream& operator >> (istream& in, const CardFactory* cf) {
 };
 
 int main() {
+    string selection;
+    string play;
+    string showCards;
+    string chainYN;
+    Card* discardedCard;
+    CardFactory myFactory = CardFactory();
+    Deck* myDeck = new Deck(std::cin,&myFactory);
+    Table* table = new Table(std::cin, &myFactory);
+    TradeArea* tradeArea = new TradeArea(std::cin, &myFactory);
+    Chain* chain = new Chain(std::cin, &myFactory);
+    Hand* hand = new Hand(std::cin, &myFactory);
+    DiscardPile* discardPile = new DiscardPile(std::cin, &myFactory);
+    cout<< "would you like to laod a previous game? [y/n]" << endl;
+    cin >> selection;
+    if (selection == "y"){
+        //body to load previous game
+    } else {
+        //new game
+        string p1, p2;
+        cout << "please enter the name of player 1: " << endl;
+        cin >> p1;
+        Player player1(p1);
+        cout << "please enter the name of player 2: " << endl;
+        cin >> p2;
+        Player player2(p2);
+        Player players[2] = { player1, player2 };
+        
+        while (!myDeck->empty()) {
+            for (Player p : players) {
+                cout << table;
+                Card* drawnCard = myDeck->draw();
+                if (tradeArea->legal(drawnCard)) {
+                    //add bean cards from the TradeArea to chains or discard them -> ???
+                    chain->sell();
+                }
+                hand->play();
+                //checks if chain ended 
+                if (chain->chainEnded()) {
+                    //receive the coins for current chain
+                    int coins = chain->sell();
+                    //add coins to the player
+                    p += coins;
+                };
+                cout << "would you like to play? [y/n]" << endl;
+                cin >> play;
+                if (play == "y") {
+                    hand->play();
+                };
+                if (chain->chainEnded()) {
+                    //receive the coins for current chain
+                    int coins = chain->sell();
+                    //add coins to the player
+                    p += coins;
+                };
+                cout << "would you like to show your cards? [y/n]" << endl;
+                cin >> showCards;
+                //player wants to show cards
+                if (showCards == "y") {
+                    cout << hand;
+                    //draws a card from deck
+                    myDeck->draw();
+                    discardedCard = hand->top();
+                    //add card to discardPile
+                    discardPile->operator+=(discardedCard);
+                };
+                //draw 3 cards
+                Card* card1 = myDeck->draw();
+                Card* card2 = myDeck->draw();
+                Card* card3 = myDeck->draw();
+                //add the 3 cards to tradeArea
+                tradeArea->operator+=(card1);
+                tradeArea->operator+=(card2);
+                tradeArea->operator+=(card3);
+                list<Card *> myTradeArea = tradeArea->getTradeArea();
+                //while top card of discard pile matches an existing card in the trade area
+                while (std::find(myTradeArea.begin(), myTradeArea.end(), discardPile->top()) != myTradeArea.end()) {
+                    Card* cardd = discardPile->pickUp();
+                    //place top most card from discard pile to tradeArea
+                    tradeArea->operator+=(cardd);
+                };
+                //loop over my tradeArea
+                for (Card* cc : myTradeArea) {
+                    cout << "would you like to chain? [y/n]" << endl;
+                    cin >> chainYN;
+                    if (chainYN == "y") {
+                        //take number of coins, assumed 5 for simplicity
+                        cc->getCardsPerCoin(5);
+                    }
+                }
+                //draw 2 cards
+                Card* c1 = myDeck->draw();
+                Card* c2 = myDeck->draw();
+                //add these cards to playe's hands
+                hand->operator+= (c1);
+                hand->operator+= (c2);
+            };
+        }
+    }
     return 0;
 };

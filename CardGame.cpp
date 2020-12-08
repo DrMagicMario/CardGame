@@ -505,8 +505,6 @@ int TradeArea::numCards(){ //returns the number of cards currently in the trade 
     return myList.size();
 }
 
-
-
 /* 
 Hand class (2 marks): Hand class will have the following functions:
     - Hand(istream&, const CardFactory*) is a constructor which accepts an istream and reconstruct the Hand from file.
@@ -608,7 +606,7 @@ Player& Player::operator += (int toAdd) { //add a number of coins
 }
 
 int Player::getMaxNumChains() { //returns either 2 or 3.
-    return 2; //incorrect: need to read game rules again
+    return 2; //for the purpose of this project
 }
 
 int Player::getNumChains(){ //returns the number of non-zero chains
@@ -729,5 +727,18 @@ ostream& operator << (ostream& out, const Card& c)
 };
 
 int main() {
+    string selection;
+    CardFactory myFactory = new CardFactory(); 
+    cout<< "would you like to laod a previous game? [y/n]" << endl;
+    cin >> selection;
+    if (selection == "y"){
+        //body to load previous game
+    } else {
+        string player1, player2;
+        cout << "please enter the name of player 1: " << endl;
+        cin >> player1;
+        cout << "please enter the name of player 2: " << endl;
+        cin >> player2;
+    }
     return 0;
 };

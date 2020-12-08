@@ -394,7 +394,9 @@ class Deck{
     Deck(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the deck from file.
     ~Deck() = default; //destructor
     Card* draw(); 
-    ostream &print(ostream &os, const Deck &item);//the insertion operator (friend) to insert all the cards in the deck to an std::ostream.
+    ostream& print(ostream& os, const Deck& item);//the insertion operator (friend) to insert all the cards in the deck to an std::ostream.
+    friend istream& operator >> (istream& in, const  CardFactory* c);
+    friend ostream& operator << (ostream& out, const Deck& d);
 };
 
 Card* Deck::draw() { //returns and removes the top card from the deck.
@@ -638,11 +640,50 @@ CardFactory class (2 marks): The card factory serves as a factory for all the be
     - Deck getDeck() returns a deck with all 104 bean cards. Note that the 104 bean cards are always the same but their order in the deck needs to be different every time. Use std::shuffle to achieve this.
 */
 class CardFactory{ // Other parts of the program will only use pointers to access the cards. Note that means, we will delete the copy constructor and assignment operator in Card.
-    public:
-    CardFactory();
+    std::vector<Card> CardPile;
+public:
+    CardFactory() {
+        for (int n = 0; n < 104; n++) {
+            if (0 <= n && n < 20) {
+                Blue blue;
+                CardPile.push_back(blue);
+            }
+            else if (20 <= n && n < 38) {
+                Chili chili;
+                CardPile.push_back(chili);
+            }
+            else if (38 <= n && n < 54) {
+                Stink stink;
+                CardPile.push_back(stink);
+            }
+            else if (54 <= n && n < 68) {
+                Green green;
+                CardPile.push_back(green);
+            }
+            else if (68 <= n && n < 80) {
+                soy soy;
+                CardPile.push_back(soy);
+            }
+            else if (80 <= n && n < 90) {
+                black black;
+                CardPile.push_back(black);
+            }
+            else if (90 <= n && n < 98) {
+                Red red;
+                CardPile.push_back(red);
+            }
+            else if (98 <= n && n < 104) {
+                garden garden;
+                CardPile.push_back(garden);
+            }
+        };
+    };
     ~CardFactory() = default;
     static CardFactory* getFactory(); //returns a pointer to the only instance of CardFactory.
-    Deck getDeck(); //returns a deck with all 104 bean cards. Use std::shuffle
+    Deck getDeck() {
+        std::shuffle(std::begin(CardPile), std::end(CardPile), std::default_random_engine());
+        //need to return a deck - not sure how to approach this
+    }; //returns a deck with all 104 bean cards. Use std::shuffle
 };
 
 /*
@@ -685,11 +726,25 @@ While there are still cards on the Deck
 end
 */
 
-//for global stream insertion operator "<<", so we can do somthing like "cout << blue";
+//for global stream insertion operator "<<", so we can do somthing like "cout << blue" - this is good;
 ostream& operator << (ostream& out, const Card& c)
 {
     out << c.name << endl;
     return out;
+};
+
+//for global stream insertion operator "<<", so we can do somthing like "cout << deck" - not sure if implemented correctly, need to go over it;
+ostream& operator << (ostream& out, const Deck& d) {
+    for (std::vector<Card*>::const_iterator i = d.myDeck.begin(); i != d.myDeck.end(); ++i)
+        out << &i;
+    return out;
+};
+
+
+//for global stream insertion operator ">>" - I think this one is good, we just need to implement getFactory method in CardFactory class.
+istream& operator >> (istream& in, const CardFactory* cf) {
+    in >> cf->getFactory();
+    return in;
 };
 
 int main() {

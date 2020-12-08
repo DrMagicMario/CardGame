@@ -5,6 +5,7 @@
                                                                                       Authors
                                                                               Ivan Godoy-Smirnov (8135127)
                                                                               Mustafa Basheer (8792149)
+                                                                              Sop Nwakaeze (8901361)
 
                                                                                     Due: Dec 7, 2020
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -373,22 +374,97 @@ Chain class (2 marks): The template Chain will have to be instantiated in the pr
 // A template class will have to created for Chain being parametric in the type of card.
 // container holding cards --> std::vector is fine
 
-class Chain { 
-    private:
-    vector<Card*> myChain;
-    public:
-    Chain(); //constructor
-    Chain(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
-    ~Chain() = default; //destructor
-    Chain& operator+=(Card*);
-    int sell(); //counts the number cards in the current chain and returns the number coins according to the function Card::getCardsPerCoin.
-    bool chainEnded(){
+class Chain {
+  class IllegalTypeException: public std::exception{
+    virtual const char* what() const throw(){
+        return "IllegalTypeException";
+    }
+};
+  
+  
+  class Chain_Base{
+protected:
+    std::string type_bean;
+public:
+    Chain_Base(std::string type_bean) : type_bean(type_bean) {};**********************
+    virtual ~Chain_Base() = default;
+    virtual int sell() = 0;
+    std::string getBean() {
+        return type_bean;
+    }
+    virtual void print(std::ostream&) const = 0;
+    
+    friend std::ostream& operator<<(std::ostream& out, Chain_Base& chain) {
+        out << chain.getBean() << "\t";
+        chain.print(out);
+        return out;
+    };
+};
+
+template<class T> class Chain : public Chain_Base {
+    std::vector<T*> type_card;
+public:
+    
+    Chain() {
+    }
+    
+    Chain(T* x) :
+    Chain_Base(x->getName()) {
+        type_card->push_back(x);
+    };
+    virtual ~Chain() {
+        delete type_card;
+    }
+
+    bool chainEnded() {
         if (myChain.empty()) {
             return true;
         };
         return false;
     }
-    ostream &print(ostream &os, const Chain &item);//insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
+    
+    //add a card to the chain
+    virtual Chain<T>& operator+=(T* bean) {
+        try {
+            type_card.push_back(bean);
+        }
+        catch (IllegalTypeException e) {
+            std::cout << "Invalid bean type:" << getBean() << " Cannot be added to:" << type_card.at(0)->getName() << std::endl;
+        }
+        return *this;
+    }
+    
+    //counts the number cards in the current chain and
+    //returns the number of coins according to the function Card::getCardsPerCoin.
+    virtual int sell() override {
+        
+        int num_cards = static_cast<int>(type_card.size());
+      
+        return type_card.at(0)->getCoinsPerCard(num_cards);
+    }
+    
+    //prints the name of the chain and the nuber of cards the chain contains in the format "Ruby  R R R"
+    virtual void print(std::ostream& o) const override{
+        for (auto& i : type_card) {
+            i.print(o);
+            o << " ";
+            }
+    }
+            
+    void setBeanType(std::string nameofbean) {
+       type_bean = nameofbean;
+    }
+};
+   // private:
+    //vector<Card*> myChain;
+    //public:
+    //Chain(); //constructor
+    //Chain(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the chain from file when a game is resumed.
+    //~Chain() = default; //destructor
+    //Chain& operator+=(Card*);
+    //int sell(); //counts the number cards in the current chain and returns the number coins according to the function Card::getCardsPerCoin.
+    //ostream &print(ostream &os, const Chain &item);//insertion operator (friend) to print Chain on an std::ostream. The hand should print a start column with the full name of the bean, for example with four cards:
+>>>>>>> 26985f2d55734642adbb1092d58054e9ade171ee
             //Red RRRR
 };
 
@@ -438,7 +514,7 @@ class DiscardPile{
     DiscardPile& operator+=(Card*);
     Card* pickUp();
     Card* top();
-    void print(std::ostream&); //insert all the cards in the DiscardPile to an std::ostream
+    void print(std::ostream&); 
     ostream &print(ostream &os, const DiscardPile &item);//the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream.
 };
 
@@ -455,6 +531,12 @@ Card* DiscardPile:: pickUp() { //returns and removes the top card from the disca
 
 Card* DiscardPile:: top() { //returns but does not remove the top card from the discard pile.
     return myDiscPile.back();
+}
+
+void DiscardPile::print(std::ostream &os) { //insert all the cards in the DiscardPile to an std::ostream
+    for (int i = 0; i < myDiscPile.size(); i++){
+        os << myDiscPile[i];
+    }
 }
 
 

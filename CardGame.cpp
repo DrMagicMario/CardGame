@@ -375,45 +375,65 @@ Chain class (2 marks): The template Chain will have to be instantiated in the pr
 // container holding cards --> std::vector is fine
 
 class Chain {
+  
   class IllegalTypeException: public std::exception{
+    
     virtual const char* what() const throw(){
+      
         return "IllegalTypeException";
     }
 };
   
   
   class Chain_Base{
+    
 protected:
+    
     std::string type_bean;
+    
 public:
+    
     Chain_Base(std::string type_bean) : type_bean(type_bean) {};**********************
-    virtual ~Chain_Base() = default;
+    
+      virtual ~Chain_Base() = default;
+    
     virtual int sell() = 0;
+    
     std::string getBean() {
-        return type_bean;
+    
+      return type_bean;
     }
+    
     virtual void print(std::ostream&) const = 0;
     
     friend std::ostream& operator<<(std::ostream& out, Chain_Base& chain) {
-        out << chain.getBean() << "\t";
-        chain.print(out);
-        return out;
+       
+      out << chain.getBean() << "\n";
+      
+      chain.print(out);
+      
+      return out;
     };
 };
 
 template<class T> class Chain : public Chain_Base {
-    std::vector<T*> type_card;
-public:
+    
+  std::vector<T*> type_card;
+
+  public:
     
     Chain() {
     }
     
     Chain(T* x) :
-    Chain_Base(x->getName()) {
-        type_card->push_back(x);
+    
+  Chain_Base(x->getName()) {
+  
+    type_card->push_back(x);
     };
     virtual ~Chain() {
-        delete type_card;
+    
+      delete type_card;
     }
     
     //add a card to the chain

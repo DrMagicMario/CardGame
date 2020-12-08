@@ -401,13 +401,29 @@ class Deck: public vector<Card*>{
     Deck(istream&, const CardFactory*); //constructor which accepts an istream and reconstructs the deck from file.
     ~Deck() = default; //destructor
     Card* draw(); 
-    ostream &print(ostream &os, const Deck &item);//the insertion operator (friend) to insert all the cards in the deck to an std::ostream.
+    void shuffle();
+    Card* operator[](int);
+    int size();
+    friend ostream &print(ostream &os, const Deck &item); //and the insertion operator (friend) to insert all the cards in the deck to an std::ostream. 
 };
+
+int Deck::size(){
+    return myDeck.size();
+}
+
+Card* Deck::operator[](int index){ //used to iterate for insertion operator
+    return myDeck[index];
+}
 
 Card* Deck::draw() { //returns and removes the top card from the deck.
     Card *myPick = myDeck.back();
     myDeck.pop_back();
     return myPick;
+}
+
+void Deck::shuffle() { //used to shuffle deck
+    unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
+    std::shuffle (myDeck.begin(), myDeck.end(), std::default_random_engine(seed));
 }
 
 /* 
@@ -429,7 +445,7 @@ class DiscardPile{
     ~DiscardPile() = default; //destructor
     DiscardPile& operator+=(Card*);
     Card* pickUp();
-    Card* top();
+    Card* top() const;
     void print(std::ostream&); 
     ostream &print(ostream &os, const DiscardPile &item);//the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream.
 };
@@ -445,7 +461,7 @@ Card* DiscardPile:: pickUp() { //returns and removes the top card from the disca
     return myPick;
 }
 
-Card* DiscardPile:: top() { //returns but does not remove the top card from the discard pile.
+Card* DiscardPile:: top() const{ //returns but does not remove the top card from the discard pile.
     return myDiscPile.back();
 }
 
@@ -455,6 +471,10 @@ void DiscardPile::print(std::ostream &os) { //insert all the cards in the Discar
     }
 }
 
+ostream& DiscardPile::print(ostream &os, const DiscardPile &item){ //the insertion operator (friend) to insert only the top card of the discard pile to an std::ostream.
+    os << "<" << myDiscPile.back() << ">";
+    return os;
+}
 
 /* 
 TradeArea class (3 marks): The TradeArea holds cards in a std::list, and will have the following functions:
@@ -524,7 +544,7 @@ Hand class (2 marks): Hand class will have the following functions:
 //container holding cards --> we can use a std::list to remove at an arbitrary location
 class Hand{
     private:
-    list<Card*> myHand;
+    vector<Card*> myHand;
     public:
     Hand(istream&, const CardFactory*); //constructor which accepts an istream and reconstruct the Hand from file.
     ~Hand() = default; //destructor
@@ -532,7 +552,8 @@ class Hand{
     Card* play(); 
     Card* top(); 
     Card* operator[](int);
-    ostream &print(ostream &os, const Hand &item);//the insertion operator (friend) to print Hand on an std::ostream. The hand should print all the cards in order. 
+    int size();
+    ostream &print(ostream &os, const Hand &item);
 };
 
 Hand& Hand:: operator+=(Card *handCard){ //adds the card to the rear of the hand.
@@ -542,7 +563,7 @@ Hand& Hand:: operator+=(Card *handCard){ //adds the card to the rear of the hand
 
 Card* Hand::play(){ //returns and removes the top card from the player's hand.
     Card *myPick = myHand.front();
-    myHand.pop_front();
+    myHand.erase(myHand.begin());
     return myPick;
 }
 
@@ -550,10 +571,19 @@ Card* Hand::top(){ //returns but does not remove the top card from the player's 
     return myHand.front();
 }
 
-Card* Hand::operator[](int){ //returns and removes the Card at a given index.
-    Card *myPick;
-    return myPick; //need to update this
+Card* Hand::operator[](int index){ //returns and removes the Card at a given index.
+    return myHand[index]; 
 }
+
+int Hand::size(){ //returns size of container
+    return myHand.size();
+}
+
+ostream & Hand::print(ostream &os, const Hand &item){ //the insertion operator (friend) to print Hand on an std::ostream. The hand should print all the cards in order.
+    return os; 
+}
+
+
 /* 
 Player class (3 marks): Player class will have the following functions:
     - Player(std::string&) is a constructor that creates a Player with a given name.
@@ -577,32 +607,47 @@ class Player {
     private:
     string name; // players name
     int coins; // players number of coins
-    int chains; // only increment when chain has at least 1 Card in it
+    int chains = 0; // only increment when chain has at least 1 Card in it
     vector<Chain*> myChains; //players chains
+    //Hand myHand; //players hand
     public:
     Player(string&); 
     Player(istream&, const CardFactory*); //constructor which accepts anistream and reconstruct the Player from file.
     ~Player() = default; //destructor
-    string getName(); 
-    int getNumCoins(); 
+    string getName() const; 
+    int getNumCoins() const; 
     Player& operator+=(int); 
-    int getMaxNumChains();
-    int getNumChains();
+    int getMaxNumChains() const;
+    int getNumChains() const;
     Chain& operator[](int i); 
     void buyThirdChain(); //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
-    void printHand(ostream&, bool); //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
-    ostream &print(ostream &os, const Player &user);//the insertion operator (friend) to print a Player to an std::ostream. The player's name, the number of coins in the player's possession and each of the chains (2 or 3, some possibly empty) should be printed. 
+    void printHand(ostream&, bool); 
+    friend ostream& operator << (ostream &os, const Player &user){ //the insertion operator (friend) to print a Player to an std::ostream. The player's name, the number of coins in the player's possession and each of the chains (2 or 3, some possibly empty) should be printed. 
+        os << user.getName() << " " << user.getNumCoins() << ((user.getNumCoins() > 2 ) ? "coins\n": "coin\n");
+    };
+};
+
+class NotEnoughCoins: public std::exception{ //not enough coins exception
+    virtual const char* what() const throw(){
+        return "You do not have enough coins to buy a third chain";
+    }
+};
+
+class ReachedMaxChain: public std::exception{ //not enough chains exception
+    virtual const char* what() const throw(){
+        return "You can't buy a new chain because you have reached to the max number of chain that you can have";
+    }
 };
 
 Player::Player(string &newName){ //constructor that creates a Player with a given name.
     name = newName;
 }
 
-string Player::getName(){ //get the name of the player.
+string Player::getName() const{ //get the name of the player.
     return name;
 }
 
-int Player::getNumCoins(){ //get the number of coins currently held by the player.
+int Player::getNumCoins() const{ //get the number of coins currently held by the player.
     return coins;
 }
 
@@ -611,11 +656,11 @@ Player& Player::operator += (int toAdd) { //add a number of coins
     return *this;
 }
 
-int Player::getMaxNumChains() { //returns either 2 or 3.
+int Player::getMaxNumChains() const { //returns either 2 or 3.
     return 2; //for the purpose of this project
 }
 
-int Player::getNumChains(){ //returns the number of non-zero chains
+int Player::getNumChains() const{ //returns the number of non-zero chains
     return chains;
 }
 
@@ -624,13 +669,28 @@ Chain& Player::operator[](int i){ //returns the chain at position i.
 }
 
 void Player::buyThirdChain(){ //adds an empty third chain to the player for three coins. The functions reduces the coin count for the player by two. If the player does not have enough coins then an exception NotEnoughCoins is thrown.
+if (chains > 1 && chains != 3){
+        if(coins < 3){
+            throw new NotEnoughCoins;
+        } else{
+            chains++;
+            coins -= 3;
+        }
+    } else {
+        throw new ReachedMaxChain;
+    }
 } 
 
-void Player::printHand(ostream &os, bool select) { //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
-    if (select) {
-
+/*void Player::printHand(ostream &os, bool select) { //prints the top card of the player's hand (with argument false) or all of the player's hand (with argument true) to the supplied ostream.
+    if (!select) {
+        os << myHand.top();
+    } else {
+        for (int i = 0; i < myHand.size() ; i++)
+        os << myHand[i];
     }
-}
+}*/
+
+
 /* 
 Table class (2 marks): Table will manage all the game components. It will hold two objects of type Player, the Deck and the DiscardPile, as well as the TradeArea. Table class will have the following functions:
     - Table(istream&, const CardFactory*) is a constructor which accepts an istream and reconstruct the Table from file.

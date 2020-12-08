@@ -15,6 +15,7 @@
 #include <fstream>
 #include <list>
 #include <queue>
+#include<random>
 using namespace std;
 
 class Card;
